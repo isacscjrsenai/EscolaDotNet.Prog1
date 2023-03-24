@@ -1,0 +1,222 @@
+
+<!-- This is the paragraph at the beginning of the page -->
+<p style="font-size: 25px; font-weight: bold; text-align: center;">Níveis - Taxonomia de Bloom</p>
+
+<!-- This is the table element that contains all the buttons -->
+<table style="margin: auto; border-collapse: collapse;">
+  <!-- This is an array that stores the colors for each column -->
+  <script>
+    var colors = ["blue", "green", "darkblue", "orange", "magenta", "red"];
+    let matriz = [["Listar" , "Esquematizar", "Utilizar", "Resolver", "Defender", "Elaborar" ],
+                  ["Relembrar", "Relacionar", "Implementar", "Categorizar", "Delimitar", "Desenhar"], 
+                  ["Reconhecer", "Explicar", "Modificar", "Diferenciar", "Estimar", "Produzir"], 
+                  ["Identificar", "Demonstrar", "Experimentar", "Comparar", "Selecionar", "Prototipar" ],
+                  ["Localizar", "Parafrasear", "Calcular", "Explicar", "Justificar", "Traçar"], 
+                  ["Descrever", "Associar", "Demonstrar", "Integrar", "Comparar", "Idear"],
+                  ["Citar", "Converter", "Classificar", "Investigar", "Explicar", "Inventar"]];
+    
+  </script>
+  
+  <!-- This is a loop that creates six rows for each label and button -->
+  <script>
+    for (var i = 0; i < 6; i++) {
+        for (var j=0; i< 7; j++) {
+            document.write("<tr>"); // This starts a new row
+      
+      // This creates a cell with a label in the same color as the column
+      document.write("<td style='color:" + colors[i] + "; font-weight: bold;'>");
+      
+      // This writes the label text according to the index
+      switch(i) {
+        case 0:
+          document.write("MEMORIZAR");
+          break;
+        case 1:
+          document.write("COMPREENDER");
+          break;
+        case 2:
+          document.write("APLICAR");
+          break;
+        case 3:
+          document.write("ANALISAR");
+          break;
+        case 4:
+          document.write("AVALIAR");
+          break;
+        case 5:
+          document.write("CRIAR");
+          break;
+      }
+      
+      document.write("</td>"); // This closes the cell
+      
+      // This creates another cell with a button in the same color as the column
+      document.write("<td>");
+      
+      // This writes the button element with some inline styles and attributes
+      document.write("<button style='background-color:" + colors[i] + "; margin-bottom: 20px; padding: 10px; border-radius: 10px; border: none; box-shadow: 2px 2px 5px #ccc; font-size:18px; text-align:center; width:20%; outline:none; box-sizing:border-box;'>");
+      
+      // This writes the button text according to the index and row number
+      switch(i) {
+            case 0:
+                switch(j) {
+                        case 0:
+                            document.write("Listar");
+                            break;
+                        case 1:
+                            document.write("Relembrar");
+                            break;
+                        case 2:
+                            document.write("Reconhecer");
+                            break;
+                        case 3:
+                            document.write("Identificar");
+                            break;
+                        case 4:
+                            document.write("Localizar");
+                            break;
+                        case 5:
+                            document.write("Descrever");
+                            break;
+                        case 6:
+                            document.write("Citar");
+                            break;
+                }
+                break;
+            case 1:
+                switch(j) {
+                        case 0:
+                            document.write("Esquematizar");
+                            break;
+                        case 1:
+                            document.write("Relacionar");
+                            break;
+                        case 2:
+                            document.write("Explicar");
+                            break;
+                        case 3:
+                            document.write("Demonstrar");
+                            break;
+                        case 4:
+                            document.write("Parafrasear");
+                            break;
+                        case 5:
+                            document.write("Associar");
+                            break;
+                        case 6:
+                            document .write ("Converter");
+                            break ;
+                }
+                break;
+            case 2:
+                switch (j ){
+                    case 0:
+                        document .write ("Utilizar");
+                        break ;
+                    case 1:
+                        document.write ("Implementar");
+                        break ;
+                    case 2:
+                        document.write ("Modificar");
+                        break;
+                    case 3:
+                        document.write("Experimentar");
+                        break;
+                    case 4:
+                        document.write("Calcular");
+                        break;
+                    case 5:
+                        document.write("Demonstrar");
+                        break;
+                    case 6:
+                        document.write("Classificar");
+                        break;
+                }
+                break;
+            case 3:
+                switch (j) {
+                    case 0:
+                        document.write("Resolver");
+                        break;
+                    case 1:
+                        document.write("Categorizar");
+                        break;
+                    case 2:
+                        document .write ("Diferenciar");
+                        break;
+                    case 3:
+                        document.write ("Comparar");
+                        break ;
+                    case 4:
+                        document .write ("Explicar");
+                        break;
+                    case 5:
+                        document.write("Integrar");
+                        break;
+                    case 6:
+                        document.write("Investigar");
+                        break;
+                }
+                break;
+            case 4:
+                switch(j){
+                    case 0:
+                    document.write("Defender");
+                    break;
+                    case 1:
+                    document.write("Delimitar");
+                    break;
+                    case 2:
+                    document.write("Estimar");
+                    break;
+                    case 3:
+                    document.write("Selecionar");
+                    break;
+                    case 4:
+                    document.write("Justificar");
+                    break;
+                    case 5:
+                    document.write("Comparar");
+                    break;
+                    case 6:
+                    document.write("Explicar");
+                    break;
+                }
+                break;
+            case 5:
+                switch (j){
+                    case 0: 
+                        document.write("Elaborar"); 
+                        break;
+                    case 1:
+                        document.write("Desenhar");
+                        break;
+                    case 2:
+                        document.write("Produzir");
+                        break;
+                    case 3:
+                        document.write("Prototipar");
+                        break;
+                    case 4:
+                        document.write("Traçar");
+                        break;
+                    case 5:
+                        document.write("Idear");
+                        break;
+                    case 6:
+                        document.write("Inventar");
+                        break;
+                }
+                break;
+
+           document.write("</button>"); // This closes the button element
+           document.write("</td>"); // This closes the cell
+           document.write("</tr>"); // This closes the row 
+        }
+      
+    }
+
+    
+
+</script>
+</table> 

@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<link rel="stylesheet" href="./style.css">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Médias</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de média</h1>
+        <input type="text" id="nota" placeholder="Digite a nota">
+        <button onClick="gravaNota()">Grava Nota</button>
+        <button onclick="calcularMedia()">Calcular média</button>
+        <h2 id="resultado"></h2>
+    </div>
+    <script>
+        var notas = [];
+        function gravaNota() {
+            var nota = document.getElementById("nota").value;
+            notas.push(nota);
+        }
+        function calcularMedia() {
+            var soma = notas.reduce(function (acumulador, elemento) { return acumulador + elemento },0);
+            var media = soma / notas.length;
+            document.getElementById('resultado').innerHTML = "A média é: " + media.toFixed(2);
+        }
+
+     
+    </script>
+</body>
+</html>
