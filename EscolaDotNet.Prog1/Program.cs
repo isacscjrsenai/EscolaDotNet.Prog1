@@ -7,152 +7,285 @@ using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
+using System.Text.RegularExpressions;
+
 
 namespace EscolaDotNet.Prog1
 {
     internal class Program
     {
-
+        //----------------------------------------//
+        //            Classe Comandos             //
+        // Contém as funções :                    //
+        //   - cadastro de aluno                  //
+        //    - apaga aluno                       //
+        //    - Registra nota de aluno            // 
+        //    - Calcula média de nota de aluno    //
+        //----------------------------------------//    
         public class Comandos
         {
+            //-------------------------------------------------------------------------------//
+            //                               Funçao Cadastra Alunos                          //
+            //                                                                               //  
+            // Pergunta o nome do aluno; telefone;endereço; sexo e idade.                    //
+            // Adiciona a lista de alunos um nova instância da classe Aluno com os argumentos//
+            // das perguntas.                                                                //
+            //-------------------------------------------------------------------------------// 
             static void CadastraAluno()
             {
-                string nomeAluno;
-                string telAluno;
-                string enderecoAluno;
-                char sexoAluno;
-                int idadeAluno;
-                Console.WriteLine("Digite o nome do aluno(a)");
-                nomeAluno = Console.ReadLine();
-                Console.WriteLine("Digite o tel do aluno(a)");
-                telAluno = Console.ReadLine();
-                Console.WriteLine("Digite o endereço do aluno(a)");
-                enderecoAluno = Console.ReadLine();
-                Console.WriteLine("Digite o sexo do aluno(a) (M ou F)");
-                sexoAluno = char.Parse(Console.ReadLine());
-                Console.WriteLine("Digite a idade do aluno(a)");
-                idadeAluno = int.Parse(Console.ReadLine());
-                Aluno.listaAlunos.Add(new Aluno(nomeAluno, telAluno, enderecoAluno, enderecoAluno, sexoAluno, idadeAluno));
-                Console.WriteLine("Aluno Registrado");
-            }
-
-            //como fazer usando arrays
-            //static void DeletaAluno(string nomeAluno)
-            ////Recebe um nome de aluno
-            ////Verifica se o aluno existe na lista de alunos
-            ////Se existe o aluno deleta o aluno
-            //{
-            //    int i = Aluno.ExisteAluno(nomeAluno);
-            //    if (i != -1)
-            //    {
-            //        Console.WriteLine($"Aluno:{Aluno.listaAlunos[i].nome} foi deletado da lista de alunos");
-            //        Aluno.listaAlunos[i] = null;
-            //    }
-            //    else
-            //    {
-            //        Console.WriteLine("O aluno não existe");
-            //    }
-            //}
-            static void DeletaAluno(string nomeAluno)
-            {
-                Aluno.listaAlunos.Remove(Aluno.listaAlunos[Aluno.listaAlunos.FindIndex(x => x.nome == nomeAluno)]);
-            }
-
-            static void RegistraNota(string nomeAluno, int avaliacao)
-            //Recebe um nome de aluno
-            //Verifica se o aluno existe na lista de alunos
-            //Se o aluno existir registra a nota
-
-            {
-                int i = Aluno.ExisteAluno(nomeAluno);
-                if (i != -1)
+                string nomeAluno = "";
+                string emailAluno = "";
+                string telAluno = "";
+                string enderecoAluno = "";
+                char sexoAluno =' ';
+                DateTime dataNascimentoAluno = DateTime.Now;
+                bool valido = false;
+                while(!valido)
                 {
-                    Console.WriteLine($"Digite a {avaliacao}ª nota do aluno {Aluno.listaAlunos[i].nome}:");
-                    Aluno.listaAlunos[i].notas[avaliacao] = int.Parse(Console.ReadLine());
-                    Console.WriteLine("Nota Registrada");
-                }
-                else
-                {
-                    Console.WriteLine("O aluno não existe");
-                }
-            }
-
-            static void CalculaMediaAluno(string nomeAluno)
-            //Recebe um nome de aluno
-            //Verifica se o aluno existe na lista de alunos
-            //Se o aluno existir calcula a média das notas já registradas do aluno
-            {
-                int quantidadeAvaliacoes = 0;
-                double mediaAluno;
-                // retorna o indice do array onde o aluno se encontra na lista de alunos
-                // se não existe o aluno a função retorna -1
-                int i = Aluno.ExisteAluno(nomeAluno);
-                //soma as notas existentes do aluno
-                int somaNotasAluno = Aluno.listaAlunos[i].notas.Sum();
-                //Verifica quantas notas o aluno tem registrada
-                //
-                for (int j = 0; j <= 3; j++)
-                {
-                    if (Aluno.listaAlunos[i].notas[j] != -1)
+                    Console.WriteLine("Digite o nome do aluno(a)");
+                    try
                     {
-                        quantidadeAvaliacoes++;
+                        nomeAluno = Console.ReadLine();
+                        // o método All da classe string retorna verdadeiro se todos os caracteres
+                        // dessa string forem letras ou forem espaço
+                        valido = nomeAluno.All(c => Char.IsLetter(c) || c == ' ');
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Digite um nome válido");
                     }
                 }
-                mediaAluno = somaNotasAluno / quantidadeAvaliacoes;
-                //Se o indice do aluno na lista é diferente de -1, ou seja, ele existe
-                //Mostra a média do aluno
-                if (i != -1)
+                //reinicia a variavel valido para a próxima pergunta
+                valido = false;
+                while (!valido)
                 {
-                    Console.WriteLine($"A média do aluno(a):{Aluno.listaAlunos[i].nome} é {mediaAluno}.");
-                    Aluno.listaAlunos[i] = null;
+                    Console.WriteLine("Digite o email do aluno:");
+                    try
+                    {
+                        emailAluno = Console.ReadLine();
+                        //valido recebe true se o email é valido
+                        //a validação é feita pela expressão regular
+                        //^ marca o inicio da string
+                        //([w.-]+) corresponde a uma ou mais ocorrências de qualquer caractere alfanumérico,
+                        //ponto ou hífen. Esse grupo representa o nome do usuário antes do @.
+                        //O @ é o @ do email mesmo
+                        //O grupo ([w-]+) corresponde a uma ou mais ocorrências de qualquer caractere
+                        //alfanumérico ou hífen. Esse grupo representa o domínio após o @
+                        //O grupo ((. (w) {2,3})+) corresponde a uma ou mais ocorrências de um ponto
+                        //seguido por dois ou três caracteres alfanuméricos. Esse grupo representa a
+                        //extensão do domínio, como .com, .net, .org, etc.
+                        //O símbolo $ indica o final da string
+                        valido = Regex.IsMatch(emailAluno, @"^([w.-]+)@([w-]+)((. (w) {2,3})+)$");
+                        
+                        
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Digite um email válido");
+                    }
                 }
-                //Se não existe o aluno mostra que não existe.
-                else
+                valido = false;
+                while (!valido)
                 {
-                    Console.WriteLine("O aluno não existe");
+                    Console.WriteLine("Digite o tel do aluno(a) no formato (xx) xxxxx-xxxx" );
+                    try
+                    {
+                        telAluno = Console.ReadLine();
+                        //verifica se o telefone digitado é um telefone usando expressão regular
+                        //O métod IsMatch retorna verdadeiro se a string tiver dois números entre
+                        // parênteses \(\d{2}\) um espaço seguido de 5 números um traço e 4 números
+                        // a barra invertida \ serve para indicar que o parênteses não é da 
+                        // organização da expressão regular e sim algo a se procurrar
+                        // \d{n} indica a quantidade de caracteres númericos
+                        valido = Regex.IsMatch(telAluno, @"\(\d{2}\) \d{5}-\d{4}");
+                    }
+                    catch ( Exception e )
+                    {
+                        Console.WriteLine("Digite um telefone válido");
+                    }
                 }
+                valido = false;
+                
+                
+                Console.WriteLine("Digite o endereço do aluno(a)");
+                enderecoAluno = Console.ReadLine();
+
+                while (!valido) 
+                {
+                    Console.WriteLine("Digite o sexo do aluno(a) (M ou F)");
+                    try
+                    {
+                        sexoAluno = char.Parse(Console.ReadLine());
+                        valido = sexoAluno is 'M' or 'F';
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Digite M ou F para o sexo do aluno(a)");
+                    }
+                }
+                valido=false;
+
+                while (!valido)
+                {
+                    Console.WriteLine("Digite a data de nascimento do aluno(a) no formato dd/MM/aaaa");
+                    try
+                    {
+                        dataNascimentoAluno = DateTime.Parse(Console.ReadLine());
+                        valido = true;
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Digite uma data de nascimento válida");
+                    }
+                }
+                valido = false;
+                
+                
+                //Cria um instância da classe Aluno como o parâmetro validados acima
+                Aluno.listaAlunos.Add(new Aluno(nomeAluno, emailAluno, telAluno, enderecoAluno, sexoAluno, dataNascimentoAluno));
+                Console.WriteLine("Aluno Registrado");
+            }
+            //Deleta o aluno da lista
+            //Recebe uma string contendo um nome de aluno
+            //Procura o indice da instância na lista de alunos que possui o atributo nome igual
+            //a string passada como parâmetro da função
+            //Remove da lista de alunos da classe Aluno a instância achada
+            static void DeletaAluno(string nomeAluno)
+            {
+                Aluno.listaAlunos.Remove(Aluno.listaAlunos[Aluno.listaAlunos.FindIndex( x => x.nome == nomeAluno)]);
             }
 
+            // Armazena a nota do aluno
+            // Recebe uma string com o nome do aluno e qual avaliação se quer gravar a nota
+            // se o anulo existe, procura pelo aluno na lista de aluno da classe Aluno
+            // Guarda o indice da lista de aluno a qual o aluno foi cadastrado em i
+            // Pergunta qual a nota da avaliação do aluno informando o aluno e qual avaliação 
+            // Grava em um lista temporária as notas desse aluno
+            // Se a lista não esta populada ou se a nota das avaliações ainda não existe
+            // Adiciona a lista a nota da avaliação e informa que a avaliação x do aluno y foi registrada
+            // Caso contrário, ou seja, a lista já esta populada e a nota pra avaliação já existe
+            // Substitui o valor e informa que houve substituição da nota da avaliação x do aluno y
+            static void RegistraNota(string nomeAluno, int avaliacao)
+            {
+                
+                if (Aluno.ExisteAluno(nomeAluno))
+                {
+                    int i = Aluno.listaAlunos.FindIndex(x => x.nome == nomeAluno);
+                    Console.WriteLine($"Digite a {avaliacao}ª nota do aluno {Aluno.listaAlunos[i].nome}:");
+                    List<int> notas = Aluno.listaAlunos[i].notas;
+                    if (notas.Count == 0 | notas.Count < avaliacao)
+                    {
+                        Aluno.listaAlunos[i].notas.Add(int.Parse(Console.ReadLine()));
+                        Console.WriteLine($"Nota {avaliacao} do aluno {nomeAluno} registrada com sucesso");
+                    }
+                    else
+                    {
+                        Aluno.listaAlunos[i].notas[avaliacao-1] = int.Parse(Console.ReadLine());
+                        Console.WriteLine($"Nota {avaliacao} do aluno {nomeAluno} modificada com sucesso");
+                    }
+                }
+                else Console.WriteLine("Não existe cadastro desse ano");
+            }
+            // Calcula a média do aluno
+            // Recebe uma string com o nome do aluno
+            // Se o aluno existe, acha o aluno na lista de aluno e armazena o indice de onde foi achado
+            // Usando o indice armazenado guarda em um lista as notas do aluno
+            // A variavel média recebe a soma das notas dividido pelo tamanho da lista de notas 
+            // Se a media for menor que 7 muda a cor da fonte para vermelho e informa a nota
+            // Senão, ou seja, a nota é maior que 7 informa a média na cor verde
+            static void CalculaMediaAluno(string nomeAluno)
+            {
+                if (Aluno.ExisteAluno(nomeAluno))
+                {
+                    int i = Aluno.listaAlunos.FindIndex(x => x.nome == nomeAluno);
+                    string aluno = Aluno.listaAlunos[i].nome;
+                    List<int> notas = Aluno.listaAlunos[i].notas;
+                    double media = notas.Sum() / notas.Count();
+                    Console.Write($"A média das notas do aluno {aluno} é de:");
+                    if (media < 7)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write(media);
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.Write(media);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Não existe cadastro desse aluno");
+                }
+
+            }
 
             public static void ExecutaComando(string comando)
             {
-            //==========================================================================
-            // Recebe um string com o comando 
-            // Separa as palavras da string 
-            // Analisa a primeira palavra procurando aluno
-            // Se há a palavra aluno
-            // Procura na última palavra do comando pelos flags: del, nota e media
-            // Se houver algum desses chama o método especifico que lida com o flag
-            //==========================================================================
+                //==========================================================================
+                // Recebe um string com o comando 
+                // Separa as palavras da string 
+                // Analisa a primeira palavra caso for aluno
+                // Analisa a última palavra do comando caso haja os flags: del, nota e media
+                // Chama o função especifica que lida com o flag
+                //==========================================================================
 
                 //separa a string recebida do comando em sub strings e coloca em um array de strings
-                string[] resultado = comando.Split(' ');
+                var resultado = comando.Split(' ');
                 switch(resultado[0])
-                {
+                {   
+                    //caso a primeira substring do comando for aluno
                     case "aluno":
+                        //analisa a última substring
                         switch(resultado[^1])
-                        {
+                        {   
                             case "-novo":
+                                //caso a última substring do comando for -novo
+                                //limpa o console
+                                //chama a função CadastraAluno
+                                //e aguarda o usuário digitar algo
+                                //quando for digitado algo sai do análise da última substring
                                 Console.Clear();
                                 Comandos.CadastraAluno();
+                                Console.ReadKey();
                                 break;
                             case "-del":
+                                //caso a última substring do comando for -del
+                                //limpa o console
+                                //concatena as substring que formam o nome do aluno de volta em uma só string
+                                //chama a função DeletaAluno usando a variavel delAluno como argumento
+                                // e aguarda o usuário digitar algo
+                                //quando for digitado algo sai da análise última substring
                                 Console.Clear();
                                 string delAluno = string.Join(" ", resultado[1..^1]);
                                 Comandos.DeletaAluno(delAluno);
+                                Console.ReadKey();
                                 break;
                             case "-media":
+                                //caso a última substring do comando for -media
+                                //limpa o console
+                                //concatena as substrings que formam o nome do aluno de volta em uma só string
+                                //guarda na variavél alunoDaMedia
+                                //chama a função CalculeMediaAluno usando alunoDaMedia como argumento
                                 Console.Clear();
-                                string mediaAluno = string.Join(" ", resultado[1..^1]);
-                                Comandos.CalculaMediaAluno(mediaAluno);
+                                string alunoDaMedia = string.Join(" ", resultado[1..^1]);
+                                Comandos.CalculaMediaAluno(alunoDaMedia);
+                                Console.ReadKey();
                                 break;
                         }
+                        
+                        //separa a ultima substring em mais outras substrings usando '-' como divisor
                         string[] cmdnota = resultado[^1].Split('-');
-                        if (cmdnota[0] =="nota")
+                        //se a primeira substring for nota executa a funçao RegistraNota
+                        if (cmdnota[1] =="nota")
                         {
                             Console.Clear();
-                            string notaAluno = string.Join(" ", resultado[1..^1]);
-                            Comandos.RegistraNota(notaAluno, int.Parse(cmdnota[1]));
+                            //concatena as substring do comando que correspondem ao nome do aluno
+                            string alunoDaNota = string.Join(" ", resultado[1..^1]);
+                            //chama a função RegistraNota com os argumentos alunoDaNota e a ultima substring
+                            //que se trata de qual avaliação do aluno a nota se trata
+                            Comandos.RegistraNota(alunoDaNota, int.Parse(cmdnota[^1]));
+                            Console.ReadKey();
                         }
                         break;
 
@@ -160,72 +293,32 @@ namespace EscolaDotNet.Prog1
                         Console.WriteLine("Comando inválido");
                         break;
                 }
-
-                // Se o comando for aluno -novo chama o função CadastraAluno()
-                //if (comando == "aluno -novo")
-                //{
-                //    Console.Clear();
-                //    CadastraAluno();
-                //    
-                //}
-                //Se a primeira substring for aluno busca pelas flags na última substring
-               
-                //if (resultado[0] == "aluno")
-                //{
-                //    //Busca na última substring pela flag -del
-                //    if (resultado[^1] == "-del")
-                //    {
-                //        //concatena em um só string o nome do aluno 
-                //        string nomeAluno = string.Join(" ", resultado[1..^1]);
-                //        //Chama a função DeletaAluno com o parametro nomeAluno que contém a 
-                //        //string concatenada do nome do aluno
-                //        Console.Clear();
-                //        DeletaAluno(nomeAluno);
-                //    }
-                //    // Verifica se a última substring contém a flag -nota
-                //    if (resultado[^1].Contains("-nota"))
-                //    {
-                //        // concatena em uma só string o nome do aluno
-                //        string nomeAluno = string.Join(" ", resultado[1..^1]);
-                //        //Divide a última substring usando o caracter "-" de flag
-                //        // Assim a útima substring que nesse caso é -nota-numero da avaliação
-                //        // vira duas strings a última é o número da avaliação e é colocada 
-                //        // na variável avaliacao como a variável é um int é necessário a conversação
-                //        int avaliacao = int.Parse(resultado[^1].Split("-")[^1]) -1;
-                //        //Chama a função RegistraNota usando o nome do aluno e o número da avaliação
-                //        // como parâmetros
-                //        Console.Clear();
-                //        RegistraNota(nomeAluno, avaliacao);
-                //    }
-                //    // Verifica se a última substring é -media
-                //    if (resultado[^1] == "-media")
-                //    {
-                //        // concatena em uma só string o nome do aluno
-                //        string nomeAluno = string.Join(" ", resultado[1..^1]);
-                //        //Chama a função CalculaMediaAluno usando o nome do aluno como parâmetro
-                //        Console.Clear();
-                //        CalculaMediaAluno(nomeAluno);
-                //    }
-                //}
             }
         }
         static void Main(string[] args)
         {
             string comando = "";
-
-            Console.WriteLine("LISTA DE COMANDOS");
-            Console.WriteLine("aluno -novo para cadastrar um novo aluno");
-            Console.WriteLine("aluno 'nome do aluno' -del para deletar o registro de um aluno");
-            Console.WriteLine("aluno 'nome do aluno' -nota-x para registrar a nota x do aluno");
-            Console.WriteLine("aluno 'nome do aluno' -media para visualizar a média do aluno");
+            void MostraComandos()
+            {
+                //Cola a cor da fonte do console em branco
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("LISTA DE COMANDOS");
+                Console.WriteLine("aluno -novo para cadastrar um novo aluno");
+                Console.WriteLine("aluno 'nome do aluno' -del para deletar o registro de um aluno");
+                Console.WriteLine("aluno 'nome do aluno' -nota-x para registrar a nota x do aluno");
+                Console.WriteLine("aluno 'nome do aluno' -media para visualizar a média do aluno");
+            }
+            
             while (true)
             {
                 //Quando algo for digitado o programa tenta executar, a função
                 // ExecutaComando verifica se é um comando e se for chama a função responsável
+                MostraComandos();
                 comando = Console.ReadLine();
                 if (comando != "")
                 {
                     Comandos.ExecutaComando(comando);
+                    Console.Clear();
                 }
                 
 
