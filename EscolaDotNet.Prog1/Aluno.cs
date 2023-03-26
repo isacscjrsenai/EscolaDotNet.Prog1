@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Net.Mail;
 
 namespace EscolaDotNet.Prog1
 {
-    internal class Aluno
+       internal class Aluno: Pessoa
     {
         //cria um propriedade estatica, ou seja, pertencente a classe Aluno e não suas instâncias
         //a propriedade é uma lista de instâncias da própria classe Aluno
@@ -27,27 +28,9 @@ namespace EscolaDotNet.Prog1
         // retorna true se existe algum aluno na lista com o nome passado
         public static bool ExisteAluno(string nomeAluno)
         {
-            return listaAlunos.Exists(x => x._nome == nomeAluno);
+            return listaAlunos.Exists(x => x.Nome == nomeAluno);
         }
-        private string _nome { get; set; }
-        //implementa o acesso público ao parâmetro privado nome
-        public string nome 
-        {
-            get
-            {
-                return _nome;
-            }
-            set
-            {
-                _nome = value;
-            }
-        }
-        private string _email { get; set; }
-        private string _tel { get; set; }
-        private string _endereco { get; set; }
-        private char _sexo { get; set; }
-        private DateTime _dataNascimento { get; set; }
-        
+               
         private List<int> _notas { get; set; }
         //uma forma mais concissa de implementar getters e setters
         public List<int> notas
@@ -56,14 +39,14 @@ namespace EscolaDotNet.Prog1
             set => _notas = value;
         }
         //método construtor da classe Aluno
-        public Aluno(string nome, string email, string tel, string endereco, char sexo, DateTime dataNascimento)
+        public Aluno(string nome, MailAddress? email, string? tel, string? endereco, char? sexo, DateTime? dataNascimento)
         {
-            this._nome = nome;
-            this._email = email;
-            this._tel = tel;
-            this._endereco = endereco;
-            this._sexo = sexo;
-            this._dataNascimento = dataNascimento;
+            this.Nome = nome;
+            this.Email = email;
+            this.Telefone = tel;
+            this.Endereco = endereco;
+            this.Sexo = sexo;
+            this.DataDeNascimento = dataNascimento;
             //quando a classe é instânciada o construtor da classe é chamado
             //então a cada instância a quantidade de alunos recebe mais 1.
             _quantidadeAlunos++;

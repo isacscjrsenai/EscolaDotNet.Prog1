@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 using System.Text.RegularExpressions;
+using System.Net.Mail;
 
 
 namespace EscolaDotNet.Prog1
@@ -34,11 +35,11 @@ namespace EscolaDotNet.Prog1
             static void CadastraAluno()
             {
                 string nomeAluno = "";
-                string emailAluno = "";
-                string telAluno = "";
-                string enderecoAluno = "";
-                char sexoAluno =' ';
-                DateTime dataNascimentoAluno = DateTime.Now;
+                MailAddress? emailAluno = new("teste@teste.com");
+                string? telAluno ="";
+                string? enderecoAluno = "";
+                char? sexoAluno = ' ';
+                DateTime? dataNascimentoAluno = DateTime.Now;
                 bool valido = false;
                 while(!valido)
                 {
@@ -49,8 +50,12 @@ namespace EscolaDotNet.Prog1
                         // o método All da classe string retorna verdadeiro se todos os caracteres
                         // dessa string forem letras ou forem espaço
                         valido = nomeAluno.All(c => Char.IsLetter(c) || c == ' ');
+                        if (!valido)
+                        {
+                            throw new FormatException();
+                        }
                     }
-                    catch (Exception e)
+                    catch (FormatException)
                     {
                         Console.WriteLine("Digite um nome válido");
                     }
@@ -62,24 +67,15 @@ namespace EscolaDotNet.Prog1
                     Console.WriteLine("Digite o email do aluno:");
                     try
                     {
-                        emailAluno = Console.ReadLine();
-                        //valido recebe true se o email é valido
-                        //a validação é feita pela expressão regular
-                        //^ marca o inicio da string
-                        //([w.-]+) corresponde a uma ou mais ocorrências de qualquer caractere alfanumérico,
-                        //ponto ou hífen. Esse grupo representa o nome do usuário antes do @.
-                        //O @ é o @ do email mesmo
-                        //O grupo ([w-]+) corresponde a uma ou mais ocorrências de qualquer caractere
-                        //alfanumérico ou hífen. Esse grupo representa o domínio após o @
-                        //O grupo ((. (w) {2,3})+) corresponde a uma ou mais ocorrências de um ponto
-                        //seguido por dois ou três caracteres alfanuméricos. Esse grupo representa a
-                        //extensão do domínio, como .com, .net, .org, etc.
-                        //O símbolo $ indica o final da string
-                        valido = Regex.IsMatch(emailAluno, @"^([w.-]+)@([w-]+)((. (w) {2,3})+)$");
+                        emailAluno = new MailAddress(Console.ReadLine()!);
+                        //Se o construtor da classe MailAddress não levantar um FormatException
+                        //Então o email é valido 
+                        valido = true;  
+                         
                         
                         
                     }
-                    catch (Exception e)
+                    catch (FormatException)
                     {
                         Console.WriteLine("Digite um email válido");
                     }
@@ -97,9 +93,13 @@ namespace EscolaDotNet.Prog1
                         // a barra invertida \ serve para indicar que o parênteses não é da 
                         // organização da expressão regular e sim algo a se procurrar
                         // \d{n} indica a quantidade de caracteres númericos
-                        valido = Regex.IsMatch(telAluno, @"\(\d{2}\) \d{5}-\d{4}");
+                        valido = Regex.IsMatch(telAluno!, @"\(\d{2}\) \d{5}-\d{4}");
+                        if (!valido)
+                        {
+                            throw new FormatException();
+                        }
                     }
-                    catch ( Exception e )
+                    catch ( FormatException )
                     {
                         Console.WriteLine("Digite um telefone válido");
                     }
@@ -115,10 +115,14 @@ namespace EscolaDotNet.Prog1
                     Console.WriteLine("Digite o sexo do aluno(a) (M ou F)");
                     try
                     {
-                        sexoAluno = char.Parse(Console.ReadLine());
+                        sexoAluno = char.Parse(Console.ReadLine()!);
                         valido = sexoAluno is 'M' or 'F';
+                        if (!valido)
+                        {
+                            throw new FormatException();
+                        }
                     }
-                    catch (Exception e)
+                    catch (FormatException)
                     {
                         Console.WriteLine("Digite M ou F para o sexo do aluno(a)");
                     }
@@ -130,10 +134,12 @@ namespace EscolaDotNet.Prog1
                     Console.WriteLine("Digite a data de nascimento do aluno(a) no formato dd/MM/aaaa");
                     try
                     {
-                        dataNascimentoAluno = DateTime.Parse(Console.ReadLine());
+                        dataNascimentoAluno = DateTime.Parse(Console.ReadLine()!);
                         valido = true;
                     }
-                    catch (Exception e)
+                    //Se a Data não tiver no formato certo o método Parse da classe DateTime vai
+                    //lançar um excessão do tipo FormatException
+                    catch (FormatException)
                     {
                         Console.WriteLine("Digite uma data de nascimento válida");
                     }
@@ -152,7 +158,7 @@ namespace EscolaDotNet.Prog1
             //Remove da lista de alunos da classe Aluno a instância achada
             static void DeletaAluno(string nomeAluno)
             {
-                Aluno.listaAlunos.Remove(Aluno.listaAlunos[Aluno.listaAlunos.FindIndex( x => x.nome == nomeAluno)]);
+                Aluno.listaAlunos.Remove(Aluno.listaAlunos[Aluno.listaAlunos.FindIndex( x => x.Nome == nomeAluno)]);
             }
 
             // Armazena a nota do aluno
@@ -167,20 +173,37 @@ namespace EscolaDotNet.Prog1
             // Substitui o valor e informa que houve substituição da nota da avaliação x do aluno y
             static void RegistraNota(string nomeAluno, int avaliacao)
             {
-                
+                bool valido = false;
+                int nota = 0;
                 if (Aluno.ExisteAluno(nomeAluno))
                 {
-                    int i = Aluno.listaAlunos.FindIndex(x => x.nome == nomeAluno);
-                    Console.WriteLine($"Digite a {avaliacao}ª nota do aluno {Aluno.listaAlunos[i].nome}:");
+                    int i = Aluno.listaAlunos.FindIndex(x => x.Nome == nomeAluno);
+                    Console.WriteLine($"Digite a {avaliacao}ª nota do aluno {Aluno.listaAlunos[i].Nome}:");
                     List<int> notas = Aluno.listaAlunos[i].notas;
+                    //testa se a nota é válida
+                    while (!valido)
+                    {
+                        try
+                        {
+                            //Se a nota não for válida, ou seja, se não for digitado um inteiro
+                            //O método Parse da classe int vai lançar uma excessão do tipo FormatException
+                            nota = int.Parse(Console.ReadLine());
+                            valido = true;
+                            
+                        }
+                        catch (FormatException)
+                        {
+                            Console.WriteLine("Digite uma nota válida");
+                        }
+                    }
                     if (notas.Count == 0 | notas.Count < avaliacao)
                     {
-                        Aluno.listaAlunos[i].notas.Add(int.Parse(Console.ReadLine()));
+                        Aluno.listaAlunos[i].notas.Add(nota);
                         Console.WriteLine($"Nota {avaliacao} do aluno {nomeAluno} registrada com sucesso");
                     }
                     else
                     {
-                        Aluno.listaAlunos[i].notas[avaliacao-1] = int.Parse(Console.ReadLine());
+                        Aluno.listaAlunos[i].notas[avaliacao-1] = nota;
                         Console.WriteLine($"Nota {avaliacao} do aluno {nomeAluno} modificada com sucesso");
                     }
                 }
@@ -197,10 +220,10 @@ namespace EscolaDotNet.Prog1
             {
                 if (Aluno.ExisteAluno(nomeAluno))
                 {
-                    int i = Aluno.listaAlunos.FindIndex(x => x.nome == nomeAluno);
-                    string aluno = Aluno.listaAlunos[i].nome;
+                    int i = Aluno.listaAlunos.FindIndex(x => x.Nome == nomeAluno);
+                    string aluno = Aluno.listaAlunos[i].Nome;
                     List<int> notas = Aluno.listaAlunos[i].notas;
-                    double media = notas.Sum() / notas.Count();
+                    double media = notas.Sum() / notas.Count;
                     Console.Write($"A média das notas do aluno {aluno} é de:");
                     if (media < 7)
                     {
